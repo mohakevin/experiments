@@ -1,0 +1,26 @@
+plugin: vmware_vm_inventory
+strict: false
+hostname: "${VMWARE_HOST}"
+username: "${VMWARE_USER}"
+password: "${VMWARE_PASSWORD}"
+validate_certs: false
+with_tags: true
+with_custom_attributes: true
+
+properties:
+  - name
+  - guest.ipAddress
+
+compose:
+  ansible_host: guest.ipAddress
+
+keyed_groups:
+  - key: "tag_category"
+    prefix: "vmware_tag_category"
+    separator: "_"
+  - key: "tag_name"
+    prefix: "vmware_tag"
+    separator: "_"
+
+filters:
+  - runtime.powerState == "poweredOn"
