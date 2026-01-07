@@ -1,0 +1,10 @@
+---
+account_name: deploy
+account_comment: Deployment account
+account_shell: /bin/bash
+account_password_hash: "$6$changeMeWithHash"  # Use a SHA-512 hash.
+account_groups:
+  - sudo
+  - adm
+account_public_key: |
+  ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMockKeyReplaceMe example@host
