@@ -1,0 +1,39 @@
+---
+- name: Create account with password and SSH access
+  hosts: all
+  become: true
+  vars_files:
+    - vars/users.yml
+
+  tasks:
+    - name: Ensure account exists
+      ansible.builtin.user:
+        name: "{{ account_name }}"
+        comment: "{{ account_comment }}"
+        shell: "{{ account_shell }}"
+        groups: "{{ account_groups | join(',') }}"
+        append: true
+        password: "{{ account_password_hash }}"
+        create_home: true
+
+    - name: Ensure .ssh directory exists
+      ansible.builtin.file:
+        path: "/home/{{ account_name }}/.ssh"
+        state: directory
+        owner: "{{ account_name }}"
+        group: "{{ account_name }}"
+        mode: "0700"
+
+    - name: Install authorized SSH key for login
+      ansible.builtin.authorized_key:
+        user: "{{ account_name }}"
+        key: "{{ account_public_key }}"
+        state: present
+
+    - name: Ensure home directory ownership is correct
+      ansible.builtin.file:
+        path: "/home/{{ account_name }}"
+        state: directory
+        owner: "{{ account_name }}"
+        group: "{{ account_name }}"
+        recurse: true
